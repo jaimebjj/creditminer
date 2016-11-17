@@ -10,7 +10,7 @@ import br.com.mj.creditminer.util.Util;
 public class Principal {
 
 	public static void main(String[] args) {
-		
+
 		Bot.clickLinkAcessoLogin();
 
 		String urlCaptcha = Bot.getLinkImagemCaptcha();
