@@ -236,7 +236,9 @@ public class Bot {
 	 */
 	private static void setMapJsoup(String cpf, int qtdResultados) {
 
+		long start = System.currentTimeMillis();
 		WebElement linkNome = null;
+		
 		for (int i = 0; i < qtdResultados; i++) {
 
 			linkNome = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("j_id_jsp_248910084_1:tabelaListaCol:" + i + ":j_id_jsp_248910084_23")));
@@ -248,6 +250,10 @@ public class Bot {
 			goTo(URL_HISTORICO);
 
 		}
+
+		long end = System.currentTimeMillis();
+		long totalTempoMatriculas = Util.calculaTempoExecucao(start, end);
+		System.out.println("tempo processamento matrículas: " + totalTempoMatriculas);
 	}
 
 	/**
