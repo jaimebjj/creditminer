@@ -161,6 +161,7 @@ public class Bot {
 					System.out.println("matrículas encontradas: " + qtdResultados);
 
 					setMapJsoup(cpf, qtdResultados);
+					System.out.println("Status: " + contador + "/" + total);
 
 				} catch (Exception e) {
 					pesquisaCPF(cpf);
@@ -178,7 +179,7 @@ public class Bot {
 		long end = System.currentTimeMillis();
 		long totalTempoCpfs = Util.calculaTempoExecucao(start, end);
 		System.out.println("tempo processamento cpfs: " + totalTempoCpfs);
-		System.out.println("Status: " + contador + "/" + total);
+		
 	}
 
 	/**
