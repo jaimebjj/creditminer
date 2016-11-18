@@ -23,6 +23,7 @@ public class Bot {
 	private final static String URL_BYPASS = "http://sc.consignum.com.br/wmc-sc/pages/consultas/disponibilidade_margem/visualiza_margem_colaborador.faces";
 	private static String mensagemDoStatus;
 	private static HTMLJsoup instanceHTMLJsoup;
+	private static String matriculaAntiga = new String();
 
 	/**
 	 * Método que redireciona para a url passada como parâmetro
@@ -148,7 +149,7 @@ public class Bot {
 			goTo(URL_HISTORICO);
 
 			for (int i = 0; i < list.size(); i++) {
-				
+
 				String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
 
 				try {
@@ -200,7 +201,7 @@ public class Bot {
 			inputCpf.sendKeys(cpf);
 			btnPesquisar.click();
 			Util.pause(1000);
-			
+
 		} catch (Exception e) {
 			goTo(URL_HISTORICO);
 			pesquisaCPF(cpf);
@@ -219,9 +220,18 @@ public class Bot {
 		String linha = new WebDriverWait(SetupSelenium.getInstance().getWebDriver(), 4).until(
 				ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_248910084_1:tabelaListaCol:tbody_element']/tr/td[1]"))).getText();
 
-		System.out.println("\nCPF: " + cpf);
-		System.out.println("MATRICULA: " + linha+"\n");
-		
+		if (matriculaAntiga.equals(linha)) {
+			// System.out.println("CPF: "+cpf+" MATRICULAS IGUAIS: " + linha);
+			goTo(URL_HISTORICO);
+			pesquisaCPF(cpf);
+			return getQtdResultados(cpf);
+		} else {
+			matriculaAntiga = linha;
+		}
+
+		// System.out.println("\nCPF: " + cpf);
+		// System.out.println("MATRICULA: " + linha + "\n");
+
 		if (linha.equals("") || linha == null || linha.isEmpty()) {
 			return qtdResultados;
 		} else {
