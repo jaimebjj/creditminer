@@ -148,7 +148,7 @@ public class Bot {
 			goTo(URL_HISTORICO);
 
 			for (int i = 0; i < list.size(); i++) {
-
+				
 				String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
 
 				try {
@@ -179,7 +179,7 @@ public class Bot {
 		long end = System.currentTimeMillis();
 		long totalTempoCpfs = Util.calculaTempoExecucao(start, end);
 		System.out.println("tempo processamento cpfs: " + totalTempoCpfs);
-		
+
 	}
 
 	/**
@@ -199,8 +199,8 @@ public class Bot {
 			inputCpf.clear();
 			inputCpf.sendKeys(cpf);
 			btnPesquisar.click();
-
 			Util.pause(1000);
+			
 		} catch (Exception e) {
 			goTo(URL_HISTORICO);
 			pesquisaCPF(cpf);
@@ -219,7 +219,10 @@ public class Bot {
 		String linha = new WebDriverWait(SetupSelenium.getInstance().getWebDriver(), 4).until(
 				ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_248910084_1:tabelaListaCol:tbody_element']/tr/td[1]"))).getText();
 
-		if (linha.equals("") || linha == null) {
+		System.out.println("\nCPF: " + cpf);
+		System.out.println("MATRICULA: " + linha+"\n");
+		
+		if (linha.equals("") || linha == null || linha.isEmpty()) {
 			return qtdResultados;
 		} else {
 			qtdResultados = SetupSelenium.getInstance().getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[contains(./@id, 'j_id_jsp_248910084_23')]"))).size();
@@ -239,7 +242,7 @@ public class Bot {
 
 		long start = System.currentTimeMillis();
 		WebElement linkNome = null;
-		
+
 		for (int i = 0; i < qtdResultados; i++) {
 
 			linkNome = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("j_id_jsp_248910084_1:tabelaListaCol:" + i + ":j_id_jsp_248910084_23")));
@@ -249,7 +252,6 @@ public class Bot {
 			goTo(URL_BYPASS);
 			getInstanceHTMLJsoup().createObjectRecordHTML(SetupSelenium.getInstance().getWebDriver().getPageSource(), cpf + "-" + i + "-margem");
 			goTo(URL_HISTORICO);
-
 		}
 
 		long end = System.currentTimeMillis();
