@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import br.com.mj.creditminer.bot.Bot;
+import br.com.mj.creditminer.controller.LoginFormCnt;
 import br.com.mj.creditminer.dto.CsvDTO;
 import br.com.mj.creditminer.util.Util;
 
@@ -18,6 +19,8 @@ public class Principal {
 		System.out.println("urlCaptcha: " + urlCaptcha);
 
 		Bot.insereCredenciais();
+		
+		new LoginFormCnt();
 
 		List<CsvDTO> list = null;
 		try {
