@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import br.com.mj.creditminer.dto.CsvDTO;
+import br.com.mj.creditminer.enumerator.CredentialsEnum;
 import br.com.mj.creditminer.processing.Cache;
 import br.com.mj.creditminer.processing.HTMLJsoup;
 import br.com.mj.creditminer.processing.WriteFileCSV;
@@ -83,15 +84,12 @@ public class Bot {
 	 * adiciona os valores digitados em nossa página de login e se loga no site
 	 * do consignum
 	 */
-	public static void insereCredenciais() {
+	public static boolean insereCredenciais(CredentialsEnum credentialsEnum, String captcha) {
 		WebElement inputUsuario = null;
 		WebElement inputPassword = null;
 		WebElement inputCaptcha = null;
 		WebElement btnEntrar = null;
 		WebElement verificaSeEstaLogado = null;
-		String usuario = null;
-		String senha = null;
-		String captcha = null;
 		try {
 
 			inputUsuario = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_1179747809_21']")));
@@ -99,20 +97,8 @@ public class Bot {
 			inputCaptcha = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='recaptcha_response_field']")));
 			btnEntrar = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_1179747809_27']")));
 
-			// System.out.println("Digite o usuario: ");
-			// usuario = new Scanner(System.in).next();
-			// inputUsuario.sendKeys(usuario);
-			//
-			//
-			// System.out.println("Digite a senha: ");
-			// senha = new Scanner(System.in).next();
-			// inputPassword.sendKeys(senha);
-
-			inputUsuario.sendKeys("SC01R02385");
-			inputPassword.sendKeys("joaonunes03");
-
-			System.out.println("Digite o captcha: ");
-			captcha = new Scanner(System.in).next();
+			inputUsuario.sendKeys(credentialsEnum.getLogin());
+			inputPassword.sendKeys(credentialsEnum.getPassword());
 			inputCaptcha.sendKeys(captcha);
 
 			btnEntrar.click();
@@ -122,12 +108,14 @@ public class Bot {
 
 			if (verificaSeEstaLogado != null) {
 				System.out.println("Logado com sucesso!!!");
+				return true;
 			}
 
 		} catch (Exception e) {
 			System.out.println("Erro ao logar-se, feche a janela e tente novamente...");
-
+			return false;
 		}
+		return false;
 
 	}
 

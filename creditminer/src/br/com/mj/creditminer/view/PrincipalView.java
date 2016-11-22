@@ -20,6 +20,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
+import br.com.mj.creditminer.controller.LoginFormCnt;
+
 public class PrincipalView extends JFrame {
 
 	private JPanel contentPane;
@@ -27,16 +29,17 @@ public class PrincipalView extends JFrame {
 	private JMenuBar menuBar;
 	private JMenu mnCadastro;
 	private static JDesktopPane desktopPane;
+	private JLabel lblLblbancologado;
 
-	public PrincipalView() {
+	public PrincipalView(LoginFormCnt loginFormCnt) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("img/logotipo.png"));
 
 		desktopPane = new JDesktopPane();
 
-		setExtendedState(MAXIMIZED_BOTH);
+		setExtendedState(NORMAL);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1089, 768);
+		setBounds(100, 100, 1936, 1058);
 		contentPane = new JPanel();
 		contentPane.setForeground(Color.DARK_GRAY);
 		contentPane.setBorder(new BevelBorder(BevelBorder.RAISED, null,
@@ -60,11 +63,16 @@ public class PrincipalView extends JFrame {
 		desktopPane.add(list);
 		desktopPane.add(menuBar);
 		
-		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(-33, -48, 1366, 692);
-		lblNewLabel.setIcon(new ImageIcon("img/mdc_logo.PNG"));
-		desktopPane.add(lblNewLabel);
+		JLabel lblLogo = new JLabel("");
+		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLogo.setBounds(-33, -48, 1366, 692);
+		lblLogo.setIcon(new ImageIcon("img/mdc_logo.PNG"));
+		desktopPane.add(lblLogo);
+		
+		lblLblbancologado = new JLabel("lblBancoLogado");
+		lblLblbancologado.setBounds(10, 46, 655, 14);
+		lblLblbancologado.setText("Você está logado no: "+ loginFormCnt.getCredentialsEnum().getDescricao());
+		desktopPane.add(lblLblbancologado);
 	}
 
 	public static void controlaJanela(JInternalFrame janela) {

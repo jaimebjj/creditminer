@@ -7,10 +7,6 @@ public class Principal {
 
 	public static void main(String[] args) {
 
-		Bot.clickLinkAcessoLogin();
-
-		//Bot.insereCredenciais();
-		
 		new LoginFormCnt();
 
 //		List<CsvDTO> list = null;
