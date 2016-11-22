@@ -24,11 +24,14 @@ import javax.swing.border.TitledBorder;
 
 import br.com.mj.creditminer.bot.Bot;
 import br.com.mj.creditminer.controller.LoginFormCnt;
+import br.com.mj.creditminer.controller.PrincipalFormCnt;
 import br.com.mj.creditminer.util.ImageUtils;
 import br.com.mj.creditminer.util.JPanelImage;
 
 public class LoginFormView extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+	
 	private MediaTracker tracker;
 	private JPanel contentPane;
 	private JLabel lblBanco; 
@@ -39,8 +42,6 @@ public class LoginFormView extends JFrame {
 	private JButton btnlogin;
 	private JButton btnSair;
 	
-	private PrincipalView principalView;
-
 	public LoginFormView(final LoginFormCnt controller) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("img/8271_64x64.png"));
 		
@@ -61,21 +62,21 @@ public class LoginFormView extends JFrame {
 		contentPane.setLayout(null);
 		
 		lblBanco = new JLabel("Banco:");
-		lblBanco.setForeground(Color.GRAY);
+		lblBanco.setForeground(Color.DARK_GRAY);
 		lblBanco.setFont(new Font("Agency FB", Font.BOLD, 15));
-		lblBanco.setBounds(23, 31, 72, 20);
+		lblBanco.setBounds(43, 33, 72, 20);
 		contentPane.add(lblBanco);
 		
 		comboBanco = new JComboBox();
-		comboBanco.setBackground(SystemColor.inactiveCaption);
-		comboBanco.setBounds(113, 31, 400, 20);
+		comboBanco.setBackground(SystemColor.WHITE);
+		comboBanco.setBounds(113, 31, 400, 25);
 		contentPane.add(comboBanco);
 		
 		panelCaptcha = new JPanelImage();
 		FlowLayout flowLayout = (FlowLayout) panelCaptcha.getLayout();
 		panelCaptcha.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelCaptcha.setBackground(Color.WHITE);
-		panelCaptcha.setBounds(113, 63, 400, 87);
+		panelCaptcha.setBounds(113, 65, 400, 91);
 		contentPane.add(panelCaptcha);	
 		
 		String urlCaptcha = Bot.getLinkImagemCaptcha();
@@ -91,47 +92,46 @@ public class LoginFormView extends JFrame {
 		}
 	         
 		lblCapctha = new JLabel("Captcha:");
-		lblCapctha.setForeground(Color.GRAY);
+		lblCapctha.setForeground(Color.DARK_GRAY);
 		lblCapctha.setFont(new Font("AgencygetPanelCaptcha() FB", Font.BOLD, 15));
-		lblCapctha.setBounds(23, 161, 92, 20);
+		lblCapctha.setBounds(29, 168, 81, 20);
 		contentPane.add(lblCapctha);		
 		
 		textCaptha = new JTextField();
-		textCaptha.setBackground(SystemColor.inactiveCaption);
-		textCaptha.setBounds(113, 162, 400, 19);
+		textCaptha.setBackground(SystemColor.WHITE);
+		textCaptha.setBounds(113, 166, 400, 25);
 		contentPane.add(textCaptha);
 		textCaptha.setColumns(10);		
 		
 		btnlogin = new JButton("Entrar");
 		btnlogin.setIcon(new ImageIcon("img/7484_32x32.png"));
-		btnlogin.setForeground(SystemColor.windowBorder);
+		btnlogin.setForeground(SystemColor.DARK_GRAY);
 		btnlogin.setFont(new Font("Agency FB", Font.BOLD, 15));
 		btnlogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					controller.Logar();
 					dispose();
-					principalView = new PrincipalView(controller);
-					principalView.setVisible(true);
+					new PrincipalFormCnt(controller);
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(),"Erro",JOptionPane.ERROR_MESSAGE);
 					e1.printStackTrace();
 				}
 			}
 		});
-		btnlogin.setBounds(246, 197, 128, 46);
+		btnlogin.setBounds(246, 203, 128, 46);
 		contentPane.add(btnlogin);
 		
 		btnSair = new JButton("Sair");
 		btnSair.setIcon(new ImageIcon("img/6045_32x32.png"));
-		btnSair.setForeground(SystemColor.windowBorder);
+		btnSair.setForeground(SystemColor.DARK_GRAY);
 		btnSair.setFont(new Font("Agency FB", Font.BOLD, 15));
 		btnSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		btnSair.setBounds(385, 197, 128, 46);
+		btnSair.setBounds(385, 203, 128, 46);
 		contentPane.add(btnSair);
 	}
 	

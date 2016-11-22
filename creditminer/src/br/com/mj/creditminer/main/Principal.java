@@ -1,6 +1,5 @@
 package br.com.mj.creditminer.main;
 
-import br.com.mj.creditminer.bot.Bot;
 import br.com.mj.creditminer.controller.LoginFormCnt;
 
 public class Principal {
