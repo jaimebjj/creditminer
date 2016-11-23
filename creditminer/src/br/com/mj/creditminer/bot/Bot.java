@@ -1,7 +1,10 @@
 package br.com.mj.creditminer.bot;
 
+import java.io.File;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -16,6 +19,7 @@ import br.com.mj.creditminer.processing.HTMLJsoup;
 import br.com.mj.creditminer.processing.WriteFileCSV;
 import br.com.mj.creditminer.setupselenium.SetupSelenium;
 import br.com.mj.creditminer.util.Util;
+import br.com.mj.creditminer.view.PrincipalView;
 
 public class Bot {
 
@@ -123,8 +127,9 @@ public class Bot {
 	 * Método que contém o laço para percorrer todos os cpfs do arquivo
 	 * 
 	 * @param list
+	 * @param principalView 
 	 */
-	public static void processaCpfs(List<CsvDTO> list) {
+	public static void processaCpfs(List<CsvDTO> list, File destino, final PrincipalView principalView) {
 
 		long start = System.currentTimeMillis();
 		mensagemDoStatus = "Iniciando...";
@@ -137,6 +142,8 @@ public class Bot {
 			goTo(URL_HISTORICO);
 
 			for (int i = 0; i < list.size(); i++) {
+				
+				final int currentValue = i;
 
 				String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
 
@@ -150,7 +157,16 @@ public class Bot {
 					System.out.println("matrículas encontradas: " + qtdResultados);
 
 					setMapJsoup(cpf, qtdResultados);
-					System.out.println("Status: " + contador + "/" + total);
+					
+					String status = "Status: " + contador + "/" + total;
+					System.out.println(status);
+					principalView.getLblStatus().setText(status);
+					
+	                SwingUtilities.invokeLater(new Runnable() {
+	                    public void run() {
+	                        principalView.getProgressBar().setValue(currentValue);
+	                    }
+	                });
 
 				} catch (Exception e) {
 					pesquisaCPF(cpf);
@@ -161,7 +177,7 @@ public class Bot {
 			System.out.println("Erro ao percorrer CPFs: " + e.getMessage());
 		} finally {
 			if (Cache.clientesDTOCache != null) {
-				WriteFileCSV.createCsvFile(Cache.clientesDTOCache, Util.getProperty("prop.diretorio.cache") + "test1.csv");
+				WriteFileCSV.createCsvFile(Cache.clientesDTOCache, destino);
 			}
 		}
 

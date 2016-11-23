@@ -1,5 +1,6 @@
 package br.com.mj.creditminer.processing;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -20,12 +21,12 @@ public class WriteFileCSV {
 	private static final String NEW_LINE_SEPARATOR = "\n";
 	private static final String FILE_HEADER = "cpf;matricula;colaborador;secretaria;nascimento;cargo;ultimafolhamovimentada;margem;controleconsignataria;tipo;banco;valorautorizado;parcelas;parcelaspagas";
 
-	public static void createCsvFile(Map<String, ClienteDTO> clientes, String fileName) {
+	public static void createCsvFile(Map<String, ClienteDTO> clientes, File destino) {
 
 		FileWriter fileWriter = null;
 
 		try {
-			fileWriter = new FileWriter(fileName, true);
+			fileWriter = new FileWriter(destino.getAbsolutePath(), true);
 
 			fileWriter.append(FILE_HEADER.toString());
 

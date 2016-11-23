@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -56,11 +59,11 @@ public class Util {
 	 *       CABEÇALHO DO ARQUIVO TEM A PALAVRA CPF
 	 */
 	@SuppressWarnings("deprecation")
-	public static <CsvDTO> List<CsvDTO> parseCsvFileToBeans(final Class<CsvDTO> beanClass, String fileName) throws IOException {
+	public static <CsvDTO> List<CsvDTO> parseCsvFileToBeans(final Class<CsvDTO> beanClass, File file) throws IOException {
 		CSVReader reader = null;
 
 		try {
-			reader = new CSVReader(new BufferedReader(new FileReader(Util.getDirectorySO() + fileName)), ';');
+			reader = new CSVReader(new BufferedReader(new FileReader(file.getAbsolutePath())), ';');
 
 			Map<String, String> columnMapping = new HashMap<String, String>();
 			columnMapping.put("CPF", "cpf");
@@ -142,5 +145,23 @@ public class Util {
 	public static long calculaTempoExecucao(long start, long end) {
 		return (end - start);
 
+	}
+	
+	public static int retornaDia(Date data){
+		Calendar  c = new GregorianCalendar();
+		c.setTime(data);
+		return c.get(Calendar.DAY_OF_MONTH);
+	}
+	
+	public static int retornaMes(Date data){
+		Calendar  c = new GregorianCalendar();
+		c.setTime(data);
+		return c.get(Calendar.MONTH);
+	}
+	
+	public static int retornaAno(Date data){
+		Calendar  c = new GregorianCalendar();
+		c.setTime(data);
+		return c.get(Calendar.YEAR);
 	}
 }

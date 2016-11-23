@@ -2,6 +2,8 @@ package br.com.mj.creditminer.view;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +18,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
@@ -24,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import br.com.mj.creditminer.controller.LoginFormCnt;
 import br.com.mj.creditminer.controller.PrincipalFormCnt;
+import javax.swing.JProgressBar;
 
 public class PrincipalView extends JFrame {
 
@@ -33,8 +37,11 @@ public class PrincipalView extends JFrame {
 	private JLabel lblbancologado;
 	private JLabel lblNomeArquivoUpload;
 	private JLabel lblNomeDiretorioDestino;
+	private JLabel lblStatus;
 	private JButton btnSelecionar;
 	private JButton btnDiretorioDestino;
+	private JButton btnIniciar;
+	private JProgressBar progressBar;
 
 	public PrincipalView(LoginFormCnt loginFormCnt, final PrincipalFormCnt principalFormCnt) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("img/logotipo.png"));
@@ -43,7 +50,7 @@ public class PrincipalView extends JFrame {
 		desktopPane.setLayout(null);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 400);
+		setBounds(100, 100, 800, 180);
 	    java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();  
 	    int componentWidth = getWidth();  
 	    int componentHeight = getHeight();  
@@ -56,8 +63,11 @@ public class PrincipalView extends JFrame {
 		setContentPane(desktopPane);
 
 		btnDiretorioDestino = new JButton("Diretório Destino");
+		btnIniciar = new JButton("Iniciar Captura");
 		
 		btnSelecionar = new JButton("Upload Arquivo");
+		btnSelecionar.setForeground(SystemColor.DARK_GRAY);
+		btnSelecionar.setFont(new Font("Agency FB", Font.BOLD, 12));
 		btnSelecionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -71,6 +81,9 @@ public class PrincipalView extends JFrame {
 			    	File file = chooser.getSelectedFile();
 			    	principalFormCnt.setFileUpload(file);
 			       	lblNomeArquivoUpload.setText(file.getName());
+			       	if (principalFormCnt.getFileDestino() != null){
+			       		lblNomeDiretorioDestino.setText(principalFormCnt.getFileDestino().getAbsolutePath());
+			       	}
 			       	btnDiretorioDestino.setEnabled(true);
 			    } 
 			}
@@ -79,10 +92,12 @@ public class PrincipalView extends JFrame {
 		desktopPane.add(btnSelecionar);
 		
 		lblNomeArquivoUpload = new JLabel();
-		lblNomeArquivoUpload.setBounds(185, 40, 393, 23);
+		lblNomeArquivoUpload.setBounds(185, 40, 597, 23);
 		desktopPane.add(lblNomeArquivoUpload);
 		
 		btnDiretorioDestino.setEnabled(false);
+		btnDiretorioDestino.setForeground(SystemColor.DARK_GRAY);
+		btnDiretorioDestino.setFont(new Font("Agency FB", Font.BOLD, 12));
 		btnDiretorioDestino.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = new JFileChooser();
@@ -91,7 +106,8 @@ public class PrincipalView extends JFrame {
                 if(res == JFileChooser.APPROVE_OPTION){
                     File diretorio = fc.getSelectedFile();
                     principalFormCnt.setFileDestino(diretorio);
-                    lblNomeDiretorioDestino.setText(diretorio.getAbsolutePath());
+                    lblNomeDiretorioDestino.setText(principalFormCnt.getFileDestino().getAbsolutePath());
+                    btnIniciar.setEnabled(true);
                 }
 
 			}
@@ -100,8 +116,28 @@ public class PrincipalView extends JFrame {
 		desktopPane.add(btnDiretorioDestino);	
 		
 		lblNomeDiretorioDestino = new JLabel();
-		lblNomeDiretorioDestino.setBounds(185, 70, 393, 23);
+		lblNomeDiretorioDestino.setBounds(185, 70, 597, 23);
 		desktopPane.add(lblNomeDiretorioDestino);
+		
+		btnIniciar.setEnabled(false);
+		btnIniciar.setForeground(SystemColor.DARK_GRAY);
+		btnIniciar.setFont(new Font("Agency FB", Font.BOLD, 12));
+		btnIniciar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					principalFormCnt.iniciarProcesso();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(),"Erro",JOptionPane.ERROR_MESSAGE);
+					e1.printStackTrace();
+				}
+			}
+		});		
+		btnIniciar.setBounds(10, 100, 156, 23);
+		desktopPane.add(btnIniciar);
+		
+		lblStatus = new JLabel();
+		lblStatus.setBounds(185, 130, 597, 23);
+		desktopPane.add(lblStatus);		
 		
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -113,6 +149,13 @@ public class PrincipalView extends JFrame {
 		lblbancologado.setBounds(10, 10, 568, 26);
 		lblbancologado.setText("Você está logado no "+ loginFormCnt.getCredentialsEnum().getDescricao());
 		desktopPane.add(lblbancologado);
+		
+		progressBar = new JProgressBar();
+		progressBar.setBounds(185, 100, 597, 23);
+		progressBar.setMinimum(0);
+		progressBar.setMaximum(100);
+		progressBar.setStringPainted(true);
+		desktopPane.add(progressBar);
 		
 	}
 
@@ -154,5 +197,21 @@ public class PrincipalView extends JFrame {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
+	}
+	
+	public JLabel getLblStatus() {
+		return lblStatus;
+	}
+	
+	public void setLblStatus(JLabel lblStatus) {
+		this.lblStatus = lblStatus;
+	}
+	
+	public JProgressBar getProgressBar() {
+		return progressBar;
+	}
+	
+	public void setProgressBar(JProgressBar progressBar) {
+		this.progressBar = progressBar;
 	}
 }
