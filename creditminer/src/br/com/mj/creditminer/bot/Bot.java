@@ -28,6 +28,7 @@ public class Bot {
 	private static String mensagemDoStatus;
 	private static HTMLJsoup instanceHTMLJsoup;
 	private static String matriculaAntiga = new String();
+	private static Thread worker;
 
 	/**
 	 * Método que redireciona para a url passada como parâmetro
@@ -129,14 +130,15 @@ public class Bot {
 	 * @param principalView
 	 */
 
-	public static void processaCpfs(final List<CsvDTO> list, File destino, final PrincipalView principalView) {
+	public static void processaCpfs(final List<CsvDTO> list, final File destino, final PrincipalView principalView) {
 
-		long start = System.currentTimeMillis();
+		principalView.setTitle("CreditMiner: " + principalView.getBancoLogado());
+		final long start = System.currentTimeMillis();
 
 		try {
 			goTo(URL_HISTORICO);
 
-			Thread worker = new Thread() {
+			worker = new Thread() {
 				public void run() {
 
 					int qtdResultados = 0;
@@ -172,9 +174,24 @@ public class Bot {
 							public void run() {
 								if (contador < (list.size() - 1)) {
 									principalView.getLblStatus().setText(mensagemDoStatus);
+
 								} else {
+									
 									principalView.getLblStatus().setText("Arquivo processado com sucesso!");
+									principalView.getLblNomeArquivoUpload().setText("");
+									principalView.getLblNomeDiretorioDestino().setText("");
 									principalView.getBtnIniciar().setEnabled(true);
+
+									// stop na thread
+									worker.interrupt();
+
+									if (Cache.clientesDTOCache != null) {
+										WriteFileCSV.createCsvFile(Cache.clientesDTOCache, destino);
+									}
+
+									long end = System.currentTimeMillis();
+									long totalTempoCpfs = Util.calculaTempoExecucao(start, end);
+									System.out.println("tempo processamento cpfs: " + totalTempoCpfs / 1000 + "s");
 								}
 							}
 						});
@@ -182,21 +199,14 @@ public class Bot {
 					}
 
 				}
+
 			};
 
 			worker.start();
 
 		} catch (Exception e) {
 			System.out.println("Erro ao percorrer CPFs: " + e.getMessage());
-		} finally {
-			if (Cache.clientesDTOCache != null) {
-				WriteFileCSV.createCsvFile(Cache.clientesDTOCache, destino);
-			}
 		}
-
-		long end = System.currentTimeMillis();
-		long totalTempoCpfs = Util.calculaTempoExecucao(start, end);
-		System.out.println("tempo processamento cpfs: " + totalTempoCpfs);
 
 	}
 

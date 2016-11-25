@@ -40,12 +40,15 @@ public class PrincipalView extends JFrame {
 	private JButton btnSelecionar;
 	private JButton btnDiretorioDestino;
 	private JButton btnIniciar;
+	private String bancoLogado;
 
 	public PrincipalView(LoginFormCnt loginFormCnt, final PrincipalFormCnt principalFormCnt) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("img/logotipo.png"));
 
 		desktopPane = new JDesktopPane();
 		desktopPane.setLayout(null);
+		
+		setTitle("CreditMiner v1.0.0");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 180);
@@ -142,9 +145,10 @@ public class PrincipalView extends JFrame {
 		lblLogo.setIcon(new ImageIcon("img/mdc_logo.PNG"));
 		desktopPane.add(lblLogo);
 
+		bancoLogado = loginFormCnt.getCredentialsEnum().getDescricao();
 		lblbancologado = new JLabel("lblBancoLogado");
 		lblbancologado.setBounds(10, 10, 568, 26);
-		lblbancologado.setText("Você está logado no " + loginFormCnt.getCredentialsEnum().getDescricao());
+		lblbancologado.setText("Você está logado no " + bancoLogado);
 		desktopPane.add(lblbancologado);
 
 	}
@@ -323,5 +327,21 @@ public class PrincipalView extends JFrame {
 	public void setBtnIniciar(JButton btnIniciar) {
 		this.btnIniciar = btnIniciar;
 	}
+
+	/**
+	 * @return the bancoLogado
+	 */
+	public String getBancoLogado() {
+		return bancoLogado;
+	}
+
+	/**
+	 * @param bancoLogado the bancoLogado to set
+	 */
+	public void setBancoLogado(String bancoLogado) {
+		this.bancoLogado = bancoLogado;
+	}
+	
+	
 
 }
