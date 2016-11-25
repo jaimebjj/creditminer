@@ -2,7 +2,6 @@ package br.com.mj.creditminer.bot;
 
 import java.io.File;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.swing.SwingUtilities;
 
@@ -127,52 +126,66 @@ public class Bot {
 	 * Método que contém o laço para percorrer todos os cpfs do arquivo
 	 * 
 	 * @param list
-	 * @param principalView 
+	 * @param principalView
 	 */
-	public static void processaCpfs(List<CsvDTO> list, File destino, final PrincipalView principalView) {
+
+	public static void processaCpfs(final List<CsvDTO> list, File destino, final PrincipalView principalView) {
 
 		long start = System.currentTimeMillis();
-		mensagemDoStatus = "Iniciando...";
-		int qtdResultados = 0;
-		int contador = 0;
-		int total = list.size();
 
 		try {
-
 			goTo(URL_HISTORICO);
 
-			for (int i = 0; i < list.size(); i++) {
-				
-				final int currentValue = i;
+			Thread worker = new Thread() {
+				public void run() {
 
-				String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
+					int qtdResultados = 0;
+					int total = list.size();
 
-				try {
-					pesquisaCPF(cpf);
-					qtdResultados = getQtdResultados(cpf);
+					for (int i = 0; i < list.size(); i++) {
+						long startCpf = System.currentTimeMillis();
+						final int contador = i;
 
-					contador++;
+						String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
 
-					System.out.println("cpf: " + cpf);
-					System.out.println("matrículas encontradas: " + qtdResultados);
+						try {
+							pesquisaCPF(cpf);
+							qtdResultados = getQtdResultados(cpf);
 
-					setMapJsoup(cpf, qtdResultados);
-					
-					String status = "Status: " + contador + "/" + total;
-					System.out.println(status);
-					principalView.getLblStatus().setText(status);
-					
-	                SwingUtilities.invokeLater(new Runnable() {
-	                    public void run() {
-	                        principalView.getProgressBar().setValue(currentValue);
-	                    }
-	                });
+							System.out.println("cpf: " + cpf);
+							System.out.println("matrículas encontradas: " + qtdResultados);
 
-				} catch (Exception e) {
-					pesquisaCPF(cpf);
+							setMapJsoup(cpf, qtdResultados);
+
+							mensagemDoStatus = "Status: " + contador + "/" + total;
+							System.out.println(mensagemDoStatus);
+
+						} catch (Exception e) {
+							pesquisaCPF(cpf);
+						}
+
+						long endCpf = System.currentTimeMillis();
+						long totalTempoCpf = Util.calculaTempoExecucao(startCpf, endCpf);
+						System.out.println("tempo processamento cpf: " + totalTempoCpf / 1000 + " segundos.");
+
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								if (contador < (list.size() - 1)) {
+									principalView.getLblStatus().setText(mensagemDoStatus);
+								} else {
+									principalView.getLblStatus().setText("Arquivo processado com sucesso!");
+									principalView.getBtnIniciar().setEnabled(true);
+								}
+							}
+						});
+
+					}
 
 				}
-			}
+			};
+
+			worker.start();
+
 		} catch (Exception e) {
 			System.out.println("Erro ao percorrer CPFs: " + e.getMessage());
 		} finally {

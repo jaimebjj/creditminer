@@ -58,7 +58,6 @@ public class PrincipalFormCnt {
 
 	public void iniciarProcesso() throws Exception {
 		List<CsvDTO> list = Util.parseCsvFileToBeans(CsvDTO.class, getFileUpload());
-		principalView.getProgressBar().setMaximum(list.size());
 		Bot.processaCpfs(list, getFileDestino(), principalView);
 	}
 }

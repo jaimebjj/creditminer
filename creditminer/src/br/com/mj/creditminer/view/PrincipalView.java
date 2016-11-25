@@ -27,7 +27,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import br.com.mj.creditminer.controller.LoginFormCnt;
 import br.com.mj.creditminer.controller.PrincipalFormCnt;
-import javax.swing.JProgressBar;
 
 public class PrincipalView extends JFrame {
 
@@ -41,7 +40,6 @@ public class PrincipalView extends JFrame {
 	private JButton btnSelecionar;
 	private JButton btnDiretorioDestino;
 	private JButton btnIniciar;
-	private JProgressBar progressBar;
 
 	public PrincipalView(LoginFormCnt loginFormCnt, final PrincipalFormCnt principalFormCnt) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("img/logotipo.png"));
@@ -51,112 +49,104 @@ public class PrincipalView extends JFrame {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 180);
-	    java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();  
-	    int componentWidth = getWidth();  
-	    int componentHeight = getHeight();  
-	    setBounds((screenSize.width-componentWidth)/2, (screenSize.height-componentHeight)/2, componentWidth, componentHeight); 
-	    
+		java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		int componentWidth = getWidth();
+		int componentHeight = getHeight();
+		setBounds((screenSize.width - componentWidth) / 2, (screenSize.height - componentHeight) / 2, componentWidth, componentHeight);
+
 		contentPane = new JPanel();
 		contentPane.setForeground(Color.DARK_GRAY);
-		contentPane.setBorder(new BevelBorder(BevelBorder.RAISED, null,
-				Color.DARK_GRAY, Color.GREEN, Color.CYAN));
+		contentPane.setBorder(new BevelBorder(BevelBorder.RAISED, null, Color.DARK_GRAY, Color.GREEN, Color.CYAN));
 		setContentPane(desktopPane);
 
 		btnDiretorioDestino = new JButton("Diretório Destino");
 		btnIniciar = new JButton("Iniciar Captura");
-		
+
 		btnSelecionar = new JButton("Upload Arquivo");
 		btnSelecionar.setForeground(SystemColor.DARK_GRAY);
 		btnSelecionar.setFont(new Font("Agency FB", Font.BOLD, 12));
 		btnSelecionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				JFileChooser chooser = new JFileChooser();  
-			    FileNameExtensionFilter filter = new FileNameExtensionFilter(  
-			        "CSV", "csv");  
-			    chooser.setFileFilter(filter); 
-			    int returnVal = chooser.showOpenDialog(null); 
-			    if(returnVal == JFileChooser.APPROVE_OPTION) { 
-			    	
-			    	File file = chooser.getSelectedFile();
-			    	principalFormCnt.setFileUpload(file);
-			       	lblNomeArquivoUpload.setText(file.getName());
-			       	if (principalFormCnt.getFileDestino() != null){
-			       		lblNomeDiretorioDestino.setText(principalFormCnt.getFileDestino().getAbsolutePath());
-			       	}
-			       	btnDiretorioDestino.setEnabled(true);
-			    } 
+
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV", "csv");
+				chooser.setFileFilter(filter);
+				int returnVal = chooser.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+					File file = chooser.getSelectedFile();
+					principalFormCnt.setFileUpload(file);
+					lblNomeArquivoUpload.setText(file.getName());
+					if (principalFormCnt.getFileDestino() != null) {
+						lblNomeDiretorioDestino.setText(principalFormCnt.getFileDestino().getAbsolutePath());
+					}
+					btnDiretorioDestino.setEnabled(true);
+				}
 			}
 		});
 		btnSelecionar.setBounds(10, 40, 156, 23);
 		desktopPane.add(btnSelecionar);
-		
+
 		lblNomeArquivoUpload = new JLabel();
 		lblNomeArquivoUpload.setBounds(185, 40, 597, 23);
 		desktopPane.add(lblNomeArquivoUpload);
-		
+
 		btnDiretorioDestino.setEnabled(false);
 		btnDiretorioDestino.setForeground(SystemColor.DARK_GRAY);
 		btnDiretorioDestino.setFont(new Font("Agency FB", Font.BOLD, 12));
 		btnDiretorioDestino.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                JFileChooser fc = new JFileChooser();
-                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int res = fc.showOpenDialog(null);
-                if(res == JFileChooser.APPROVE_OPTION){
-                    File diretorio = fc.getSelectedFile();
-                    principalFormCnt.setFileDestino(diretorio);
-                    lblNomeDiretorioDestino.setText(principalFormCnt.getFileDestino().getAbsolutePath());
-                    btnIniciar.setEnabled(true);
-                }
+				JFileChooser fc = new JFileChooser();
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int res = fc.showOpenDialog(null);
+				if (res == JFileChooser.APPROVE_OPTION) {
+					File diretorio = fc.getSelectedFile();
+					principalFormCnt.setFileDestino(diretorio);
+					lblNomeDiretorioDestino.setText(principalFormCnt.getFileDestino().getAbsolutePath());
+					btnIniciar.setEnabled(true);
+				}
 
 			}
 		});
 		btnDiretorioDestino.setBounds(10, 70, 156, 23);
-		desktopPane.add(btnDiretorioDestino);	
-		
+		desktopPane.add(btnDiretorioDestino);
+
 		lblNomeDiretorioDestino = new JLabel();
 		lblNomeDiretorioDestino.setBounds(185, 70, 597, 23);
 		desktopPane.add(lblNomeDiretorioDestino);
-		
+
 		btnIniciar.setEnabled(false);
 		btnIniciar.setForeground(SystemColor.DARK_GRAY);
 		btnIniciar.setFont(new Font("Agency FB", Font.BOLD, 12));
 		btnIniciar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					btnIniciar.setEnabled(false);
 					principalFormCnt.iniciarProcesso();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage(),"Erro",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 					e1.printStackTrace();
 				}
 			}
-		});		
+		});
 		btnIniciar.setBounds(10, 100, 156, 23);
 		desktopPane.add(btnIniciar);
-		
+
 		lblStatus = new JLabel();
-		lblStatus.setBounds(185, 130, 597, 23);
-		desktopPane.add(lblStatus);		
-		
+		lblStatus.setBounds(185, 100, 597, 23);
+		desktopPane.add(lblStatus);
+
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLogo.setBounds(-125, -111, 1366, 692);
 		lblLogo.setIcon(new ImageIcon("img/mdc_logo.PNG"));
 		desktopPane.add(lblLogo);
-		
+
 		lblbancologado = new JLabel("lblBancoLogado");
 		lblbancologado.setBounds(10, 10, 568, 26);
-		lblbancologado.setText("Você está logado no "+ loginFormCnt.getCredentialsEnum().getDescricao());
+		lblbancologado.setText("Você está logado no " + loginFormCnt.getCredentialsEnum().getDescricao());
 		desktopPane.add(lblbancologado);
-		
-		progressBar = new JProgressBar();
-		progressBar.setBounds(185, 100, 597, 23);
-		progressBar.setMinimum(0);
-		progressBar.setMaximum(100);
-		progressBar.setStringPainted(true);
-		desktopPane.add(progressBar);
-		
+
 	}
 
 	public static void controlaJanela(JInternalFrame janela) {
@@ -198,20 +188,140 @@ public class PrincipalView extends JFrame {
 			}
 		});
 	}
-	
+
+	/**
+	 * @return the lblStatus
+	 */
 	public JLabel getLblStatus() {
 		return lblStatus;
 	}
-	
+
+	/**
+	 * @param lblStatus
+	 *            the lblStatus to set
+	 */
 	public void setLblStatus(JLabel lblStatus) {
 		this.lblStatus = lblStatus;
 	}
-	
-	public JProgressBar getProgressBar() {
-		return progressBar;
+
+	/**
+	 * @return the contentPane
+	 */
+	public JPanel getContentPane() {
+		return contentPane;
 	}
-	
-	public void setProgressBar(JProgressBar progressBar) {
-		this.progressBar = progressBar;
+
+	/**
+	 * @param contentPane
+	 *            the contentPane to set
+	 */
+	public void setContentPane(JPanel contentPane) {
+		this.contentPane = contentPane;
 	}
+
+	/**
+	 * @return the desktopPane
+	 */
+	public static JDesktopPane getDesktopPane() {
+		return desktopPane;
+	}
+
+	/**
+	 * @param desktopPane
+	 *            the desktopPane to set
+	 */
+	public static void setDesktopPane(JDesktopPane desktopPane) {
+		PrincipalView.desktopPane = desktopPane;
+	}
+
+	/**
+	 * @return the lblbancologado
+	 */
+	public JLabel getLblbancologado() {
+		return lblbancologado;
+	}
+
+	/**
+	 * @param lblbancologado
+	 *            the lblbancologado to set
+	 */
+	public void setLblbancologado(JLabel lblbancologado) {
+		this.lblbancologado = lblbancologado;
+	}
+
+	/**
+	 * @return the lblNomeArquivoUpload
+	 */
+	public JLabel getLblNomeArquivoUpload() {
+		return lblNomeArquivoUpload;
+	}
+
+	/**
+	 * @param lblNomeArquivoUpload
+	 *            the lblNomeArquivoUpload to set
+	 */
+	public void setLblNomeArquivoUpload(JLabel lblNomeArquivoUpload) {
+		this.lblNomeArquivoUpload = lblNomeArquivoUpload;
+	}
+
+	/**
+	 * @return the lblNomeDiretorioDestino
+	 */
+	public JLabel getLblNomeDiretorioDestino() {
+		return lblNomeDiretorioDestino;
+	}
+
+	/**
+	 * @param lblNomeDiretorioDestino
+	 *            the lblNomeDiretorioDestino to set
+	 */
+	public void setLblNomeDiretorioDestino(JLabel lblNomeDiretorioDestino) {
+		this.lblNomeDiretorioDestino = lblNomeDiretorioDestino;
+	}
+
+	/**
+	 * @return the btnSelecionar
+	 */
+	public JButton getBtnSelecionar() {
+		return btnSelecionar;
+	}
+
+	/**
+	 * @param btnSelecionar
+	 *            the btnSelecionar to set
+	 */
+	public void setBtnSelecionar(JButton btnSelecionar) {
+		this.btnSelecionar = btnSelecionar;
+	}
+
+	/**
+	 * @return the btnDiretorioDestino
+	 */
+	public JButton getBtnDiretorioDestino() {
+		return btnDiretorioDestino;
+	}
+
+	/**
+	 * @param btnDiretorioDestino
+	 *            the btnDiretorioDestino to set
+	 */
+	public void setBtnDiretorioDestino(JButton btnDiretorioDestino) {
+		this.btnDiretorioDestino = btnDiretorioDestino;
+	}
+
+	/**
+	 * @return the btnIniciar
+	 */
+	public JButton getBtnIniciar() {
+		return btnIniciar;
+	}
+
+	/**
+	 * @param btnIniciar
+	 *            the btnIniciar to set
+	 */
+	public void setBtnIniciar(JButton btnIniciar) {
+		this.btnIniciar = btnIniciar;
+	}
+
 }
