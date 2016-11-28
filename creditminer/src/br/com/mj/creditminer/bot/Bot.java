@@ -146,7 +146,7 @@ public class Bot {
 
 					for (int i = 0; i < list.size(); i++) {
 						long startCpf = System.currentTimeMillis();
-						final int contador = i;
+						final int contador = i + 1;
 
 						String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
 
@@ -169,7 +169,7 @@ public class Bot {
 						long totalTempoCpf = Util.calculaTempoExecucao(startCpf, endCpf);
 						System.out.println("tempo processamento cpf: " + totalTempoCpf / 1000 + " segundos.");
 						
-						mensagemDoStatus = "Status: " + contador + "/" + total + " tempo processamento: "+ totalTempoCpf + "s";
+						mensagemDoStatus = "Status: " + contador + "/" + total + " tempo processamento: "+ totalTempoCpf / 1000 + "s";
 
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
