@@ -159,7 +159,6 @@ public class Bot {
 
 							setMapJsoup(cpf, qtdResultados);
 
-							mensagemDoStatus = "Status: " + contador + "/" + total;
 							System.out.println(mensagemDoStatus);
 
 						} catch (Exception e) {
@@ -169,6 +168,8 @@ public class Bot {
 						long endCpf = System.currentTimeMillis();
 						long totalTempoCpf = Util.calculaTempoExecucao(startCpf, endCpf);
 						System.out.println("tempo processamento cpf: " + totalTempoCpf / 1000 + " segundos.");
+						
+						mensagemDoStatus = "Status: " + contador + "/" + total + " tempo processamento: "+ totalTempoCpf + "s";
 
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
