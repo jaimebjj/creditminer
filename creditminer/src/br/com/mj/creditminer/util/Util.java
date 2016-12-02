@@ -122,7 +122,7 @@ public class Util {
 	 * 
 	 * @param html
 	 */
-	public void salvaHtml(String html, String nomeArquivo) {
+	public static void salvaHtml(String html, String nomeArquivo) {
 		FileWriter arquivo;
 		try {
 			arquivo = new FileWriter(new File(Util.getDirectorySO() + nomeArquivo + ".html"));

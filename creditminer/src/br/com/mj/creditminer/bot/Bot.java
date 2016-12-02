@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -132,7 +135,6 @@ public class Bot {
 
 	public static void processaCpfs(final List<CsvDTO> list, final File destino, final PrincipalView principalView) {
 
-		principalView.setTitle("CreditMiner: " + principalView.getBancoLogado());
 		final long start = System.currentTimeMillis();
 
 		try {
@@ -151,15 +153,19 @@ public class Bot {
 						String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
 
 						try {
+
+							Util.salvaHtml(SetupSelenium.getInstance().getWebDriver().getPageSource(), contador + ".png");
+							File scrFile = ((TakesScreenshot) SetupSelenium.getInstance().getWebDriver()).getScreenshotAs(OutputType.FILE);
+							FileUtils.copyFile(scrFile, new File("/home/CreditMiner/" + contador + ".png"));
+
 							pesquisaCPF(cpf);
 							qtdResultados = getQtdResultados(cpf);
 
 							System.out.println("cpf: " + cpf);
 							System.out.println("matrículas encontradas: " + qtdResultados);
 
-							setMapJsoup(cpf, qtdResultados);
-
-							System.out.println(mensagemDoStatus);
+							if (qtdResultados > 0)
+								setMapJsoup(cpf, qtdResultados);
 
 						} catch (Exception e) {
 							pesquisaCPF(cpf);
@@ -167,17 +173,17 @@ public class Bot {
 
 						long endCpf = System.currentTimeMillis();
 						long totalTempoCpf = Util.calculaTempoExecucao(startCpf, endCpf);
-						System.out.println("tempo processamento cpf: " + totalTempoCpf / 1000 + " segundos.");
-						
-						mensagemDoStatus = "Status: " + contador + "/" + total + " tempo processamento: "+ totalTempoCpf / 1000 + "s";
+
+						mensagemDoStatus = "Status: " + contador + "/" + total + " tempo processamento: " + totalTempoCpf / 1000 + "s";
+						System.out.println(mensagemDoStatus);
 
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								if (contador < (list.size() - 1)) {
+								if (contador < list.size()) {
 									principalView.getLblStatus().setText(mensagemDoStatus);
 
 								} else {
-									
+
 									principalView.getLblStatus().setText("Arquivo processado com sucesso!");
 									principalView.getLblNomeArquivoUpload().setText("");
 									principalView.getLblNomeDiretorioDestino().setText("");
@@ -192,7 +198,7 @@ public class Bot {
 
 									long end = System.currentTimeMillis();
 									long totalTempoCpfs = Util.calculaTempoExecucao(start, end);
-									System.out.println("tempo processamento cpfs: " + totalTempoCpfs / 1000 + "s");
+									System.out.println("tempo total processamento cpfs: " + totalTempoCpfs / 1000 + "s");
 								}
 							}
 						});
@@ -245,26 +251,23 @@ public class Bot {
 	private static int getQtdResultados(String cpf) {
 		int qtdResultados = 0;
 
-		String linha = new WebDriverWait(SetupSelenium.getInstance().getWebDriver(), 4).until(
+		String linha = new WebDriverWait(SetupSelenium.getInstance().getWebDriver(), 10).until(
 				ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_248910084_1:tabelaListaCol:tbody_element']/tr/td[1]"))).getText();
 
-		if (matriculaAntiga.equals(linha)) {
-			// System.out.println("CPF: "+cpf+" MATRICULAS IGUAIS: " + linha);
-			goTo(URL_HISTORICO);
-			pesquisaCPF(cpf);
-			return getQtdResultados(cpf);
-		} else {
-			matriculaAntiga = linha;
-		}
+		if (!linha.equals("") && linha != null) {
 
-		// System.out.println("\nCPF: " + cpf);
-		// System.out.println("MATRICULA: " + linha + "\n");
+			if (matriculaAntiga.equals(linha)) {
+				System.out.println("CPF: " + cpf + " MATRICULAS IGUAIS: " + linha + "\n");
+				goTo(URL_INICIAL_CONSIGNUM);
+				goTo(URL_HISTORICO);
+				pesquisaCPF(cpf);
+				return getQtdResultados(cpf);
+			} else {
+				System.out.println("CPF: " + cpf + " MATRICULAS DIFERENTES: \nlinha: " + linha + " matricula: " + matriculaAntiga);
+				matriculaAntiga = linha;
+			}
 
-		if (linha.equals("") || linha == null || linha.isEmpty()) {
-			return qtdResultados;
-		} else {
 			qtdResultados = SetupSelenium.getInstance().getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[contains(./@id, 'j_id_jsp_248910084_23')]"))).size();
-
 		}
 
 		return qtdResultados;
