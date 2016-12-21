@@ -25,9 +25,9 @@ import br.com.mj.creditminer.view.PrincipalView;
 
 public class Bot {
 
-	private final static String URL_INICIAL_CONSIGNUM = "http://sc.consignum.com.br/wmc-sc/login/selecao_parceiro.faces";
-	private final static String URL_HISTORICO = "http://sc.consignum.com.br/wmc-sc/pages/consultas/historico/pesquisa_colaborador.faces";
-	private final static String URL_BYPASS = "http://sc.consignum.com.br/wmc-sc/pages/consultas/disponibilidade_margem/visualiza_margem_colaborador.faces";
+	private final static String URL_INICIAL_CONSIGNUM = "https://tellisc.psainfo.com.br/ragnar/login/orgao.faces";
+	private final static String URL_HISTORICO = "https://tellisc.psainfo.com.br/ragnar/pages/consultas/historico/pesquisa_colaborador.faces";
+	private final static String URL_BYPASS = "https://tellisc.psainfo.com.br/ragnar/pages/consultas/disponibilidade_margem/visualiza_margem_colaborador.faces";
 	private static String mensagemDoStatus;
 	private static HTMLJsoup instanceHTMLJsoup;
 	private static String matriculaAntiga = new String();
@@ -52,16 +52,17 @@ public class Bot {
 			goTo(URL_INICIAL_CONSIGNUM);
 
 			Util.pause(1000);
-			WebElement element = SetupSelenium.getInstance().getWait()
-					.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_1088422203_1:j_id_jsp_1088422203_8:tbody_element']/tr/td[2]/a")));
+			WebElement element = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='yui-rec0']/td[1]/div/a")));
 
 			element.click();
 			Util.pause(1000);
+			
 		} catch (Exception e) {
 			clickLinkAcessoLogin();
 		}
 
 	}
+
 
 	/**
 	 * Método que navega pelo site e busca a imagem do captcha.
@@ -70,6 +71,7 @@ public class Bot {
 	 * 
 	 */
 	public static String getLinkImagemCaptcha() {
+
 
 		StringBuilder linkImagem = new StringBuilder();
 
@@ -97,12 +99,15 @@ public class Bot {
 		WebElement inputCaptcha = null;
 		WebElement btnEntrar = null;
 		WebElement verificaSeEstaLogado = null;
+		WebElement btnRefreshCaptcha = null;
 		try {
 
-			inputUsuario = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_1179747809_21']")));
-			inputPassword = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.name("j_id_jsp_1179747809_23")));
+			inputUsuario = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_2017778995_9']")));
+			inputPassword = SetupSelenium.getInstance().getWait()
+					.until(ExpectedConditions.visibilityOfElementLocated(By.name(".//*[@id='j_id_jsp_2017778995_6_content']/fieldset/table/tbody/tr[2]/td[2]/input")));
 			inputCaptcha = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='recaptcha_response_field']")));
-			btnEntrar = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_1179747809_27']")));
+			btnEntrar = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_2017778995_16']")));
+			btnRefreshCaptcha = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='recaptcha_reload']")));
 
 			inputUsuario.sendKeys(credentialsEnum.getLogin());
 			inputPassword.sendKeys(credentialsEnum.getPassword());
@@ -111,7 +116,7 @@ public class Bot {
 			btnEntrar.click();
 
 			verificaSeEstaLogado = new WebDriverWait(SetupSelenium.getInstance().getWebDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By
-					.xpath("//*[contains(./@id, 'j_id_jsp_252844863_0pc3')]")));
+					.xpath(".//*[@id='j_id_jsp_790209491_1:j_id_jsp_790209491_14_content']/fieldset/legend")));
 
 			if (verificaSeEstaLogado != null) {
 				System.out.println("Logado com sucesso!!!");
@@ -138,6 +143,7 @@ public class Bot {
 		final long start = System.currentTimeMillis();
 
 		try {
+
 			goTo(URL_HISTORICO);
 
 			worker = new Thread() {
@@ -153,6 +159,12 @@ public class Bot {
 						String cpf = StringUtils.leftPad(list.get(i).getCpf(), 11, "0");
 
 						try {
+
+							// if (contador == 520 || contador == 960) {
+							// mensagemDoStatus =
+							// "Aguardando carregamento de página...";
+							// Util.pause(60000);
+							// }
 
 							Util.salvaHtml(SetupSelenium.getInstance().getWebDriver().getPageSource(), contador + ".png");
 							File scrFile = ((TakesScreenshot) SetupSelenium.getInstance().getWebDriver()).getScreenshotAs(OutputType.FILE);
@@ -197,7 +209,7 @@ public class Bot {
 									}
 
 									long end = System.currentTimeMillis();
-									long totalTempoCpfs = Util.calculaTempoExecucao(start, end);
+									double totalTempoCpfs = Util.calculaTempoExecucao(start, end);
 									System.out.println("tempo total processamento cpfs: " + totalTempoCpfs / 1000 + "s");
 								}
 							}
@@ -228,8 +240,8 @@ public class Bot {
 		WebElement inputCpf = null;
 		WebElement btnPesquisar = null;
 		try {
-			inputCpf = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_248910084_1:j_id_jsp_248910084_14']")));
-			btnPesquisar = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_248910084_1:j_id_jsp_248910084_15']")));
+			inputCpf = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_368910192_1:j_id_jsp_368910192_14']")));
+			btnPesquisar = SetupSelenium.getInstance().getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_368910192_1:j_id_jsp_368910192_16']")));
 
 			inputCpf.clear();
 			inputCpf.sendKeys(cpf);
@@ -251,23 +263,25 @@ public class Bot {
 	private static int getQtdResultados(String cpf) {
 		int qtdResultados = 0;
 
-		String linha = new WebDriverWait(SetupSelenium.getInstance().getWebDriver(), 10).until(
-				ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_248910084_1:tabelaListaCol:tbody_element']/tr/td[1]"))).getText();
+		WebElement resultado = new WebDriverWait(SetupSelenium.getInstance().getWebDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By
+				.xpath(".//*[@id='j_id_jsp_248910084_1:tabelaListaCol:tbody_element']/tr/td[2]")));
 
-		if (!linha.equals("") && linha != null) {
+		if (resultado != null) {
 
-			if (matriculaAntiga.equals(linha)) {
-				System.out.println("CPF: " + cpf + " MATRICULAS IGUAIS: " + linha + "\n");
-				goTo(URL_INICIAL_CONSIGNUM);
+			String matricula = SetupSelenium.getInstance().getWait()
+					.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[@id='j_id_jsp_248910084_1:tabelaListaCol:tbody_element']/tr/td[1]"))).getText();
+
+			if (matriculaAntiga.equals(matricula)) {
+				System.out.println("CPF: " + cpf + " MATRICULAS IGUAIS: " + matricula + "\n");
 				goTo(URL_HISTORICO);
 				pesquisaCPF(cpf);
 				return getQtdResultados(cpf);
 			} else {
-				System.out.println("CPF: " + cpf + " MATRICULAS DIFERENTES: \nlinha: " + linha + " matricula: " + matriculaAntiga);
-				matriculaAntiga = linha;
+				System.out.println("CPF: " + cpf + " MATRICULAS DIFERENTES: \nlinha: " + matricula + " matricula: " + matriculaAntiga);
+				matriculaAntiga = matricula;
 			}
 
-			qtdResultados = SetupSelenium.getInstance().getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[contains(./@id, 'j_id_jsp_248910084_23')]"))).size();
+			return qtdResultados = SetupSelenium.getInstance().getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*[contains(./@id, 'j_id_jsp_248910084_23')]"))).size();
 		}
 
 		return qtdResultados;
